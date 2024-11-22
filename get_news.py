@@ -1,13 +1,14 @@
 import requests
 import datetime as dt
+import streamlit as st
 from bs4 import BeautifulSoup
 
 
 def from_batteryindustry(date) -> list:
-    url = 'https://batteryindustry.tech'
+    url = 'https://batteryindustry.net/news/'
 
     cur_date = date.strftime("%d %B %Y")
-    print(cur_date)
+
     response = requests.get(url)
     news_url_set = []
 
@@ -16,55 +17,43 @@ def from_batteryindustry(date) -> list:
 
         # Battery Industry news
         breakingnews_div = soup.find('div', class_='td_block_inner td-mc1-wrap')
-        othernews_div = soup.find('div', class_='td_block_inner tdb-block-inner td-fix-index')
 
-        if breakingnews_div and othernews_div:
+        if breakingnews_div:
             # Find all the article sections within the main <div>
             all_sub_divs_breaking = breakingnews_div.find_all('div', recursive=False)
-            all_sub_divs_other = othernews_div.find_all('div', recursive=False)
 
             for sub_div in all_sub_divs_breaking:
-                try:
-                    link = sub_div.find('h3').find('a').get('href')
-                    date = sub_div.find('time').text
+                link = sub_div.find('h3').find('a').get('href')
+                date = sub_div.find('time').text
 
-                    if date == cur_date:
-                        news_url_set.append(str(link))
-                except:
-                    pass
+                if date == cur_date:
+                    news_url_set.append(str(link))
 
-            for sub_div in all_sub_divs_other:
-                try:
-                    link = sub_div.find('h3').find('a').get('href')
-                    date = sub_div.find('time').text
-
-                    if date == cur_date:
-                        news_url_set.append(str(link))
-                except:
-                    pass
-
-            print(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
+            st.info(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
 
         else:
-            print('Main article container not found on the page.')
+            st.warning('Main article container not found on the page.')
 
     else:
-        print('Failed to retrieve the web page. Status code:', response.status_code)
+        st.error('Failed to retrieve the web page. Status code:', response.status_code)
     
     contents_BattIndustry = []
     for url in news_url_set:
         response = requests.get(url)
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        article = soup.find('div', class_='td-post-content tagdiv-type')
-        if article:
-            paragraph = article.find('p')
-            contents_BattIndustry.append(paragraph.text)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            article = soup.find('div', class_='td-post-content tagdiv-type')
+            if article:
+                try:
+                    paragraph = article.find('p')
+                    contents_BattIndustry.append(paragraph.text)
+                except:
+                    pass
+            else:
+                st.warning('Article not found on the page.')
         else:
-            print('Article not found on the page.')
-    else:
-        print('Failed to retrieve the web page. Status code:', response.status_code)
+            st.error('Failed to retrieve the web page. Status code:', response.status_code)
     
     return contents_BattIndustry
 
@@ -97,28 +86,31 @@ def from_energystorage(date) -> list:
                 except:
                     pass
 
-            print(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
+            st.info(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
 
         else:
-            print('Main article container not found on the page.')
+            st.warning('Main article container not found on the page.')
 
     else:
-        print('Failed to retrieve the web page. Status code:', response.status_code)
+        st.error('Failed to retrieve the web page. Status code:', response.status_code)
     
     contents_EnergyStorageNews = []
     for url in news_url_set:
         response = requests.get(url)
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        article = soup.find('div', class_='wpwp-non-paywall')
-        if article:
-            paragraph = article.find('p')
-            contents_EnergyStorageNews.append(paragraph.text)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            article = soup.find('div', class_='wpwp-non-paywall')
+            if article:
+                try:
+                    paragraph = article.find('p')
+                    contents_EnergyStorageNews.append(paragraph.text)
+                except:
+                    pass
+            else:
+                st.warning('Article not found on the page.')
         else:
-            print('Article not found on the page.')
-    else:
-        print('Failed to retrieve the web page. Status code:', response.status_code)
+            st.error('Failed to retrieve the web page. Status code:', response.status_code)
     
     return contents_EnergyStorageNews
 
@@ -144,48 +136,50 @@ def from_electrek(date) -> list:
                 articles = sub_div.find_all('article', class_='article standard')
                 for article in articles:
                     link = article.find('a', class_='article__title-link').get('href')
-                if 'podcast'  in str(link):
-                    pass
-                else:
-                    news_url_set.append(str(link))
+                    if 'podcast'  in str(link):
+                        pass
+                    else:
+                        news_url_set.append(str(link))
 
-            print(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
+            st.info(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
 
         else:
-            print('Main article container not found on the page.')
+            st.warning('Main article container not found on the page.')
 
     else:
-        print('Failed to retrieve the web page. Status code:', response.status_code)
+        st.error('Failed to retrieve the web page. Status code:', response.status_code)
     
     contents_electrek = []
     for url in news_url_set:
         response = requests.get(url)
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        article = soup.find('div', class_='container med post-content') 
-        if article:
-            paragraph = article.find('p')
-            contents_electrek.append(paragraph.text)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            article = soup.find('div', class_='container med post-content') 
+            if article:
+                try:
+                    paragraph = article.find('p')
+                    contents_electrek.append(paragraph.text)
+                except:
+                    pass
+            else:
+                st.warning('Article not found on the page.')
         else:
-            print('Article not found on the page.')
-    else:
-        print('Failed to retrieve the web page. Status code:', response.status_code)
+            st.error('Failed to retrieve the web page. Status code:', response.status_code)
     
     return contents_electrek
 
 
 if __name__ == "__main__":
-    mydate = dt.datetime.now(dt.timezone.utc)+dt.timedelta(hours=-50)
-    print(mydate)
+    mydate = dt.datetime.now(dt.timezone.utc)+dt.timedelta(hours=-10)
 
     contents_BattIndustry = from_batteryindustry(mydate)
     contents_EnergyStorageNews = from_energystorage(mydate)
     contents_electrek = from_electrek(mydate)
 
-    all_news = contents_EnergyStorageNews + contents_BattIndustry + contents_electrek
+    all_news = contents_BattIndustry + contents_EnergyStorageNews + contents_electrek
     print(f'Total News on {mydate} is: {len(all_news)}')
 
     for news in all_news:
         print(news)
-        print('-------------------------------------------------')
+        print('-'*50)
