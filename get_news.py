@@ -29,8 +29,6 @@ def from_batteryindustry(date) -> list:
                 if date == cur_date:
                     news_url_set.append(str(link))
 
-            st.info(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
-
         else:
             st.warning('Main article container not found on the page.')
 
@@ -47,6 +45,8 @@ def from_batteryindustry(date) -> list:
             if article:
                 try:
                     paragraph = article.find('p')
+                    st.write(f"**{paragraph.text}** \n\n{url}")
+                    st.divider()
                     contents_BattIndustry.append(paragraph.text)
                 except:
                     pass
@@ -86,8 +86,6 @@ def from_energystorage(date) -> list:
                 except:
                     pass
 
-            st.info(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
-
         else:
             st.warning('Main article container not found on the page.')
 
@@ -104,6 +102,8 @@ def from_energystorage(date) -> list:
             if article:
                 try:
                     paragraph = article.find('p')
+                    st.write(f"**{paragraph.text}** \n\n{url}")
+                    st.divider()
                     contents_EnergyStorageNews.append(paragraph.text)
                 except:
                     pass
@@ -141,8 +141,6 @@ def from_electrek(date) -> list:
                     else:
                         news_url_set.append(str(link))
 
-            st.info(f'Number of News today({cur_date}): ' + str(len(news_url_set)))
-
         else:
             st.warning('Main article container not found on the page.')
 
@@ -159,6 +157,8 @@ def from_electrek(date) -> list:
             if article:
                 try:
                     paragraph = article.find('p')
+                    st.write(f"**{paragraph.text}** \n\n{url}")
+                    st.divider()
                     contents_electrek.append(paragraph.text)
                 except:
                     pass
