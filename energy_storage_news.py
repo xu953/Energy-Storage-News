@@ -12,6 +12,7 @@ selected_date = st.date_input(
     default_date
 )
 
+# get news
 if st.button("Start", type="primary"):
     with st.spinner(f"FETCHING NEWS ON {selected_date} ......"):
         try:
