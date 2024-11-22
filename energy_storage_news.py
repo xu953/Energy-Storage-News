@@ -19,4 +19,4 @@ if st.button("Start", type="primary"):
             news_es = get_news.from_energystorage(selected_date)
             news_ek = get_news.from_electrek(selected_date)
         except:
-            st.warning("PLEASE CHANGE THE DATE")
+            st.warning(f"NO NEWS ON {selected_date} - PLEASE CHANGE THE DATE")
